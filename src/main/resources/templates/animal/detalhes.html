@@ -1,0 +1,137 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos :: cabecalho('Detalhes do Animal')}" />
+  <body>
+
+  <div th:replace="~{fragmentos :: funcao-logout}" />
+
+    <div class="container">
+        <div class="row">
+            <h1>Detalhes do Animal</h1>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <table class="table table-hover">
+
+                <tr>
+	                <td><b>Nome:</b></td>
+	                <td th:text="${animal.nm_animal}"></td>
+                </tr>
+
+                <tr>
+	                <td><b>Espécie:</b></td>
+	                <td th:text="${animal.especie}"></td>
+                </tr>
+
+                <tr>
+	                <td><b>Raça:</b></td>
+	                <td th:text="${animal.raca}"></td>
+                </tr>
+
+                <tr>
+	                <td><b>Sexo:</b></td>
+	                <td th:text="${animal.sexo == 'M' ? 'Macho' : 'Fêmea'}"></td>
+                </tr>
+
+                <tr>
+	                <td><b>Idade:</b></td>
+	                <td th:text="${idade_texto != null ? idade_texto : animal.idade}"></td>
+                </tr>
+
+                <tr>
+	                <td><b>Peso:</b></td>
+	                <td th:text="${animal.peso}"></td>
+                </tr>
+
+                <tr>
+	                <td><b>Data de Nascimento:</b></td>
+	                <td th:text="${#temporals.format(animal.dt_nascimento,'dd/MM/yyyy')}"></td>
+                </tr>
+
+                <tr>
+	                <td><b>Responsável:</b></td>
+	                <td th:text="${animal.responsavel != null ? animal.responsavel.nm_responsavel : 'Sem responsável'}"></td>
+                </tr>
+
+                </table>
+            </div>
+        </div>
+
+        <div class="row">
+            <h3>Vacinas aplicadas</h3>
+            <p th:if="${#lists.isEmpty(vacinas_aplicadas)}">Nenhuma vacina aplicada até o momento.</p>
+            <table class="table table-hover" th:unless="${#lists.isEmpty(vacinas_aplicadas)}">
+                <thead>
+                    <tr>
+                        <th scope="col">Vacina</th>
+                        <th scope="col">Data</th>
+                        <th scope="col">Doses previstas</th>
+                        <th scope="col">Intervalo (dias)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="aplicacao : ${vacinas_aplicadas}">
+                        <td th:text="${aplicacao.vacina != null ? aplicacao.vacina.nm_vacina : '-'}"></td>
+                        <td th:text="${#temporals.format(aplicacao.dt_receita,'dd/MM/yyyy')}"></td>
+                        <td th:text="${aplicacao.num_doses}"></td>
+                        <td th:text="${aplicacao.frequencia_aplicacao}"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="row">
+            <h3>Consultas</h3>
+            <p th:if="${#lists.isEmpty(consultas_animal)}">Nenhuma consulta registrada.</p>
+            <table class="table table-hover" th:unless="${#lists.isEmpty(consultas_animal)}">
+                <thead>
+                    <tr>
+                        <th scope="col">Data</th>
+                        <th scope="col">Veterinário</th>
+                        <th scope="col">Situação</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="consulta : ${consultas_animal}">
+                        <td th:text="${#temporals.format(consulta.dt_consulta,'dd/MM/yyyy')}"></td>
+                        <td th:text="${consulta.veterinario != null ? consulta.veterinario.nm_veterinario : '-'}"></td>
+                        <td th:text="${consulta.dt_consulta.isBefore(hoje) ? 'Realizada' : 'Agendada'}"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="row">
+            <h3>Doenças registradas</h3>
+            <p th:if="${#lists.isEmpty(doencas_animal)}">Nenhuma doença registrada.</p>
+            <table class="table table-hover" th:unless="${#lists.isEmpty(doencas_animal)}">
+                <thead>
+                    <tr>
+                        <th scope="col">Doença</th>
+                        <th scope="col">Diagnóstico</th>
+                        <th scope="col">Gravidade</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Observações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="registro : ${doencas_animal}">
+                        <td th:text="${registro.doenca != null ? registro.doenca.nm_doenca : '-'}"></td>
+                        <td th:text="${#temporals.format(registro.dt_diagnostico,'dd/MM/yyyy')}"></td>
+                        <td th:text="${registro.gravidade}"></td>
+                        <td th:text="${registro.status}"></td>
+                        <td th:text="${registro.observacoes}"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="row">
+            <a href="/animais">Voltar</a>
+        </div>
+    </div>
+
+  <script th:replace="~{fragmentos :: bootstrap-script}" />
+
+   </body>
+</html>

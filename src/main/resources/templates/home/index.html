@@ -1,0 +1,88 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragmentos :: cabecalho('Home Page - Clyvo')}" />
+
+  <body>
+
+  <div th:replace="~{fragmentos :: funcao-logout}" />
+
+    <div class="container">
+
+        <div class="row">
+            <h1>Bem-vindo(a) ao sistema Clyvo, <span th:text="${usuario.username}"></span>!</h1>
+        </div>
+
+        <div class="row">
+            <p>Perfil: <span th:text="${usuario.permissao}"></span></p>
+        </div>
+
+        <div class="row">
+            <h3>Gerenciamento</h3>
+
+            <p><strong>Cadastros:</strong> <a href="/responsaveis">Responsáveis</a> | <a href="/animais">Animais</a></p>
+
+            <p><strong>Atendimentos:</strong> <a href="/consultas">Consultas</a> | <a href="/vacinaAnimal">Vacinação</a></p>
+
+            <p th:if="${usuario.permissao == 'ADMIN'}">
+            <strong>Catálogo (Admin):</strong> <a href="/doencas">Doenças</a> | <a href="/vacinas">Vacinas</a> | <a href="/veterinarios">Veterinários</a>
+            </p>
+        </div>
+
+        <div class="row">
+            <h3>Lembretes de vacinas</h3>
+            <p th:if="${#lists.isEmpty(lembretes_vacinas)}">Nenhuma dose pendente no momento.</p>
+            <table class="table table-hover" th:unless="${#lists.isEmpty(lembretes_vacinas)}">
+                <thead>
+                    <tr>
+                        <th scope="col">Animal</th>
+                        <th scope="col">Vacina</th>
+                        <th scope="col">Doses aplicadas</th>
+                        <th scope="col">Faltam</th>
+                        <th scope="col">Próxima dose</th>
+                        <th scope="col">Situação</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="lembrete : ${lembretes_vacinas}">
+                        <td th:text="${lembrete.nomeAnimal}"></td>
+                        <td th:text="${lembrete.nomeVacina}"></td>
+                        <td th:text="${lembrete.dosesAplicadas} + ' de ' + ${lembrete.dosesTotais}"></td>
+                        <td th:text="${lembrete.dosesRestantes}"></td>
+                        <td th:text="${#temporals.format(lembrete.proximaData,'dd/MM/yyyy')}"></td>
+                        <td>
+                            <span th:if="${lembrete.atrasada}" class="badge bg-danger">Atrasada</span>
+                            <span th:unless="${lembrete.atrasada}" class="badge bg-success">No prazo</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="row">
+            <h3>Consultas dos próximos 7 dias</h3>
+            <p th:if="${#lists.isEmpty(consultas_proximas)}">Nenhuma consulta agendada para os próximos 7 dias.</p>
+            <table class="table table-hover" th:unless="${#lists.isEmpty(consultas_proximas)}">
+                <thead>
+                    <tr>
+                        <th scope="col">Animal</th>
+                        <th scope="col">Veterinário</th>
+                        <th scope="col">Data</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="consulta : ${consultas_proximas}">
+                        <td th:text="${consulta.animal != null ? consulta.animal.nm_animal : '-'}"></td>
+                        <td th:text="${consulta.veterinario != null ? consulta.veterinario.nm_veterinario : '-'}"></td>
+                        <td th:text="${#temporals.format(consulta.dt_consulta,'dd/MM/yyyy')}"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+   <script th:replace="~{fragmentos :: bootstrap-script}" />
+
+  </body>
+</html>
